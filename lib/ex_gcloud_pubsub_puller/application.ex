@@ -10,6 +10,7 @@ defmodule ExGcloudPubsubPuller.Application do
     children = [
       # Starts a worker by calling: ExGcloudPubsubPuller.Worker.start_link(arg)
       # {ExGcloudPubsubPuller.Worker, arg},
+      ExGcloudPubsubPuller.Scheduler
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

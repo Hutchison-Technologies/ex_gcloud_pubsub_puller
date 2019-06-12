@@ -18,3 +18,22 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/ex_gcloud_pubsub_puller](https://hexdocs.pm/ex_gcloud_pubsub_puller).
+
+## Configuring Pull Controllers
+
+Add config to your `config/config.exs` to configure pull controllers, like so:
+
+```
+config :my_app, ExGcloudPubsubPuller.Scheduler,
+  schedule: {:extended, "*/5"},
+  overlap: false,
+  timezone: :utc,
+  jobs: [
+    cost_job: [
+      task: {ExGcloudPubsubPuller, :main, [CostPullController]}
+    ],
+    usage_job: [
+      task: {ExGcloudPubsubPuller, :main, [UsagePullController]}
+    ]
+  ]
+```

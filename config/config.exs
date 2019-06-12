@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :ex_http_microservice, key: :value
+#     config :ex_gcloud_pubsub_puller, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:ex_http_microservice, :key)
+#     Application.get_env(:ex_gcloud_pubsub_puller, :key)
 #
 # You can also configure a 3rd-party app:
 #
