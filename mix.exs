@@ -10,7 +10,8 @@ defmodule ExGcloudPubsubPuller.MixProject do
       deps: deps(),
       dialyzer: [
         plt_file: {:no_warn, "dialyzer.plt"}
-      ]
+      ],
+      test_coverage: [tool: :covertool]
     ]
   end
 
@@ -26,7 +27,9 @@ defmodule ExGcloudPubsubPuller.MixProject do
   defp deps do
     [
       {:eliver, "~> 2.0.0", only: :dev},
-      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
+      {:junit_formatter, "~> 3.0", only: [:test]},
+      {:covertool, "~> 2.0", only: [:test]}
     ]
   end
 end

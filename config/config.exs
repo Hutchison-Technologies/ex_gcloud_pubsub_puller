@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :ex_gcloud_pubsub_puller, key: :value
+#     config :ex_http_microservice, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:ex_gcloud_pubsub_puller, :key)
+#     Application.get_env(:ex_http_microservice, :key)
 #
 # You can also configure a 3rd-party app:
 #
@@ -27,4 +27,4 @@ use Mix.Config
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-#     import_config "#{Mix.env()}.exs"
+import_config "#{Mix.env()}.exs"
