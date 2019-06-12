@@ -6,12 +6,30 @@ defmodule ExGcloudPubsubPuller.MixProject do
       app: :ex_gcloud_pubsub_puller,
       version: String.trim(File.read!("VERSION")),
       elixir: "~> 1.7",
+      build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
       deps: deps(),
+      name: "ExGcloudPubsubPuller",
+      source_url: "https://github.com/Hutchison-Technologies/ex_gcloud_pubsub_puller",
+      homepage_url: "https://github.com/Hutchison-Technologies/ex_gcloud_pubsub_puller",
       dialyzer: [
         plt_file: {:no_warn, "dialyzer.plt"}
       ],
       test_coverage: [tool: :covertool]
+    ]
+  end
+
+  defp description() do
+    "Cron-based & configurable gcloud pubsub subscription message puller."
+  end
+
+  defp package() do
+    [
+      licenses: ["MIT"],
+      files: ~w(lib .formatter.exs mix.exs README.md LICENSE VERSION),
+      links: %{"GitHub" => "https://github.com/Hutchison-Technologies/ex_gcloud_pubsub_puller"}
     ]
   end
 
@@ -29,7 +47,8 @@ defmodule ExGcloudPubsubPuller.MixProject do
       {:eliver, "~> 2.0.0", only: :dev},
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
       {:junit_formatter, "~> 3.0", only: [:test]},
-      {:covertool, "~> 2.0", only: [:test]}
+      {:covertool, "~> 2.0", only: [:test]},
+      {:ex_doc, "~> 0.20.2", only: :dev, runtime: false}
     ]
   end
 end
