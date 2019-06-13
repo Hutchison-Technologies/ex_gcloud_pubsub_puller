@@ -76,7 +76,7 @@ defmodule ExGcloudPubsubPuller do
   @spec validate_subscription_id!(String.t()) :: String.t()
   defp validate_subscription_id!(subscription_id) when is_binary(subscription_id) do
     cond do
-      Regex.match?(~r/$[a-zA-Z0-9][a-zA-Z0-9-]+/, subscription_id) ->
+      Regex.match?(~r/^[a-zA-Z0-9][a-zA-Z0-9-]+$/, subscription_id) ->
         subscription_id
 
       true ->

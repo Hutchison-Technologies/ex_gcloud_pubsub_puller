@@ -108,4 +108,94 @@ defmodule ExGcloudPubsubPullerTest do
       end
     end
   end
+
+  describe "main/1 given valid args" do
+    test "raises no error when given module implements full ExGcloudPubsubPuller.PullController behaviour" do
+      defmodule GoodController do
+        @behaviour ExGcloudPubsubPuller.PullController
+
+        @impl true
+        def subscription_id(), do: "cost-subscription"
+
+        @impl true
+        def handle_message(_), do: :ok
+
+        @impl true
+        def handle_stagnant(), do: nil
+
+        @impl true
+        def handle_pull_error(_), do: nil
+
+        @impl true
+        def handle_ack_error(_), do: nil
+      end
+
+      ExGcloudPubsubPuller.main(GoodController)
+    end
+
+    test "raises no error when given module returns valid subscription_id" do
+      defmodule GoodSubOnePullController do
+        @behaviour ExGcloudPubsubPuller.PullController
+
+        @impl true
+        def subscription_id(), do: "cost-subscription"
+
+        @impl true
+        def handle_message(_), do: :ok
+
+        @impl true
+        def handle_stagnant(), do: nil
+
+        @impl true
+        def handle_pull_error(_), do: nil
+
+        @impl true
+        def handle_ack_error(_), do: nil
+      end
+
+      ExGcloudPubsubPuller.main(GoodSubOnePullController)
+
+      defmodule GoodSubTwoPullController do
+        @behaviour ExGcloudPubsubPuller.PullController
+
+        @impl true
+        def subscription_id(), do: "subscription"
+
+        @impl true
+        def handle_message(_), do: :ok
+
+        @impl true
+        def handle_stagnant(), do: nil
+
+        @impl true
+        def handle_pull_error(_), do: nil
+
+        @impl true
+        def handle_ack_error(_), do: nil
+      end
+
+      ExGcloudPubsubPuller.main(GoodSubTwoPullController)
+
+      defmodule GoodSubThreePullController do
+        @behaviour ExGcloudPubsubPuller.PullController
+
+        @impl true
+        def subscription_id(), do: "subScri0ption"
+
+        @impl true
+        def handle_message(_), do: :ok
+
+        @impl true
+        def handle_stagnant(), do: nil
+
+        @impl true
+        def handle_pull_error(_), do: nil
+
+        @impl true
+        def handle_ack_error(_), do: nil
+      end
+
+      ExGcloudPubsubPuller.main(GoodSubThreePullController)
+    end
+  end
 end
