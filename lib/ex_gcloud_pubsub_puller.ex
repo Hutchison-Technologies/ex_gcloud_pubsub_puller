@@ -1,5 +1,6 @@
 defmodule ExGcloudPubsubPuller do
   require Logger
+  alias ExGcloudPubsubPuller.SubscriptionHealth
 
   @typedoc """
   A Module that implements the `ExGcloudPubsubPuller.PullController` behaviour.
@@ -26,6 +27,11 @@ defmodule ExGcloudPubsubPuller do
 
       {:ok, []} ->
         prefixed_log.("Received no messages")
+
+        if SubscriptionHealth.is_stagnant?(subscription_id) do
+          prefixed_log.("Subscription is stagnant")
+          pull_controller.handle_stagnant()
+        end
 
       {:ok, messages} ->
         prefixed_log.("Received #{messages |> Enum.count()} messages")
