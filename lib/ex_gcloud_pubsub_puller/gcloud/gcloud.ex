@@ -25,12 +25,18 @@ defmodule ExGcloudPubsubPuller.Gcloud do
   """
   @spec project_id :: {:ok, String.t()} | {:error, <<>>}
   def project_id() do
-    case Goth.Config.get(:project_id) do
-      {:ok, project_id} ->
-        {:ok, project_id}
+    cond do
+      Application.get_env(:goth, :disabled, false) ->
+        {:ok, "test-proj"}
 
-      :error ->
-        {:error, ""}
+      true ->
+        case Goth.Config.get(:project_id) do
+          {:ok, project_id} ->
+            {:ok, project_id}
+
+          :error ->
+            {:error, ""}
+        end
     end
   end
 end
