@@ -23,18 +23,24 @@ defmodule ExGcloudPubsubPuller.Gcloud.Pubsub do
           project_id,
           subscription_id,
           body: %Model.PullRequest{
-            maxMessages: max_messages
+            maxMessages: max_messages,
+            returnImmediately: true
           }
         )
         |> handle_pull_response()
     end
   end
 
+  @dialyzer {:nowarn_function, handle_pull_response: 1}
   @spec handle_pull_response(
           {:error, Tesla.Env.t()}
           | {:ok, Model.PullResponse.t()}
         ) :: {:ok, [Model.ReceivedMessage.t()]} | {:error, Tesla.Env.t()}
   defp handle_pull_response({:error, %Tesla.Env{}} = error), do: error
+
+  defp handle_pull_response({:ok, %Model.PullResponse{receivedMessages: nil}}) do
+    {:ok, []}
+  end
 
   defp handle_pull_response({:ok, %Model.PullResponse{receivedMessages: messages}}) do
     {:ok, messages}
