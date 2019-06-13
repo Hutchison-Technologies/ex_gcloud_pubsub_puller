@@ -7,7 +7,7 @@ defmodule ExGcloudPubsubPuller do
   @doc """
   Main entrypoint to a pull job.
 
-  Expects to be called with a module that implements the `ExGcloudPubsubPuller.PullController` behaviour.
+  Expects to be given a module that implements the `ExGcloudPubsubPuller.PullController` behaviour.
   """
   @spec main(pull_controller()) :: any()
   def main(pull_controller) when is_atom(pull_controller) do
