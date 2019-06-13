@@ -48,6 +48,7 @@ defmodule ExGcloudPubsubPuller.MixProject do
       {:timex, "~> 3.5"},
       {:google_api_pub_sub, "~> 0.7"},
       {:goth, "~> 1.0"},
+      {:poison, "~> 3.1.0"},
       {:eliver, "~> 2.0.0", only: :dev},
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
       {:junit_formatter, "~> 3.0", only: [:test]},
