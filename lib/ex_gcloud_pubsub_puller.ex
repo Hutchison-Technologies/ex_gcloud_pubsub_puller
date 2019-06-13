@@ -1,4 +1,6 @@
 defmodule ExGcloudPubsubPuller do
+  require Logger
+
   @typedoc """
   A Module that implements the `ExGcloudPubsubPuller.PullController` behaviour.
   """
@@ -12,7 +14,9 @@ defmodule ExGcloudPubsubPuller do
   @spec main(pull_controller()) :: any()
   def main(pull_controller) do
     pull_controller = pull_controller |> validate_pull_controller!()
-    _subscription_id = pull_controller.subscription_id() |> validate_subscription_id!()
+    subscription_id = pull_controller.subscription_id() |> validate_subscription_id!()
+    log_prefix = ["[", subscription_id, "] "] |> Enum.join()
+    log(log_prefix, "Starting pull job")
   end
 
   @spec validate_pull_controller!(pull_controller()) :: pull_controller()
@@ -69,5 +73,12 @@ defmodule ExGcloudPubsubPuller do
         "subscription_id should be alphanumeric with dashes (cannot start with a dash), got: #{
           inspect(arg)
         }"
+  end
+
+  @spec log(String.t(), String.t()) :: any()
+  defp log(prefix, msg) do
+    [prefix, msg]
+    |> Enum.join()
+    |> Logger.info()
   end
 end
