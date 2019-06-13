@@ -8,7 +8,8 @@ defmodule ExGcloudPubsubPuller.Gcloud.Pubsub do
   @doc """
   Pulls messages from the given Google PubSub subscription.
   """
-  @spec pull(String.t(), integer()) :: {:ok, [Model.ReceivedMessage.t()]} | {:error, String.t()}
+  @spec pull(String.t(), integer()) ::
+          {:ok, [Model.ReceivedMessage.t()]} | {:error, Tesla.Env.t()}
   def pull(subscription_id, max_messages \\ 100) do
     conn = Gcloud.connection()
 
@@ -32,10 +33,8 @@ defmodule ExGcloudPubsubPuller.Gcloud.Pubsub do
   @spec handle_pull_response(
           {:error, Tesla.Env.t()}
           | {:ok, Model.PullResponse.t()}
-        ) :: {:ok, [Model.ReceivedMessage.t()]} | {:error, String.t()}
-  defp handle_pull_response({:error, %Tesla.Env{url: url, body: body, status: status}}) do
-    {:error, "Error #{status} pulling from Google PubSub at #{url}, got: #{body}"}
-  end
+        ) :: {:ok, [Model.ReceivedMessage.t()]} | {:error, Tesla.Env.t()}
+  defp handle_pull_response({:error, %Tesla.Env{}} = error), do: error
 
   defp handle_pull_response({:ok, %Model.PullResponse{receivedMessages: messages}}) do
     {:ok, messages}
