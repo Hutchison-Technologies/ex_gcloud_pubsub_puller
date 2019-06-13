@@ -10,16 +10,13 @@ defmodule ExGcloudPubsubPuller do
   Expects to be given a module that implements the `ExGcloudPubsubPuller.PullController` behaviour.
   """
   @spec main(pull_controller()) :: any()
-  def main(pull_controller) when is_atom(pull_controller) do
-    _pull_controller = validate_pull_controller!(pull_controller)
-  end
-
-  def main(invalid_arg) do
-    raise_invalid_pull_controller(invalid_arg)
+  def main(pull_controller) do
+    pull_controller = validate_pull_controller!(pull_controller)
+    _subscription_id = pull_controller.subscription_id()
   end
 
   @spec validate_pull_controller!(pull_controller()) :: pull_controller()
-  defp validate_pull_controller!(some_module) do
+  defp validate_pull_controller!(some_module) when is_atom(some_module) do
     case Code.ensure_loaded(some_module) do
       {:module, handler_module} ->
         cond do
@@ -30,7 +27,7 @@ defmodule ExGcloudPubsubPuller do
             handler_module
 
           true ->
-            raise_invalid_pull_controller(some_module)
+            raise_invalid_pull_controller(handler_module)
         end
 
       error ->
@@ -40,6 +37,8 @@ defmodule ExGcloudPubsubPuller do
               }"
     end
   end
+
+  defp validate_pull_controller!(invalid_arg), do: raise_invalid_pull_controller(invalid_arg)
 
   @spec raise_invalid_pull_controller(any()) :: any()
   defp raise_invalid_pull_controller(arg) do

@@ -42,7 +42,7 @@ spec:
           sh "mix local.hex --force"
           sh "mix local.rebar --force"
           sh "if [ -d \"/cache\" ]; then cp -rf /cache/* .; fi"
-          sh "mix do deps.get, compile"
+          sh "mix deps.get"
           sh "mix dialyzer"
           sh "mix test --cover"
           sh "rm -rf /cache/*"
