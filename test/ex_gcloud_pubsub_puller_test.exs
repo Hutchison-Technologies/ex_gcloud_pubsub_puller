@@ -53,6 +53,9 @@ defmodule ExGcloudPubsubPullerTest do
 
           @impl true
           def handle_pull_error(_), do: nil
+
+          @impl true
+          def handle_ack_error(_), do: nil
         end
 
         ExGcloudPubsubPuller.main(BadSubOnePullController)
@@ -73,6 +76,9 @@ defmodule ExGcloudPubsubPullerTest do
 
           @impl true
           def handle_pull_error(_), do: nil
+
+          @impl true
+          def handle_ack_error(_), do: nil
         end
 
         ExGcloudPubsubPuller.main(BadSubTwoPullController)
@@ -93,6 +99,9 @@ defmodule ExGcloudPubsubPullerTest do
 
           @impl true
           def handle_pull_error(_), do: nil
+
+          @impl true
+          def handle_ack_error(_), do: nil
         end
 
         ExGcloudPubsubPuller.main(BadSubThreePullController)

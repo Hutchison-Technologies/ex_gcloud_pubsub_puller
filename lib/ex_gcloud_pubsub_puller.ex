@@ -16,7 +16,20 @@ defmodule ExGcloudPubsubPuller do
     pull_controller = pull_controller |> validate_pull_controller!()
     subscription_id = pull_controller.subscription_id() |> validate_subscription_id!()
     log_prefix = ["[", subscription_id, "] "] |> Enum.join()
-    log(log_prefix, "Starting pull job")
+    prefixed_log = fn msg -> log(log_prefix, msg) end
+    prefixed_log.("Starting pull job")
+
+    case ExGcloudPubsubPuller.Gcloud.Pubsub.pull(subscription_id) do
+      {:error, error} ->
+        prefixed_log.("Received error from pull")
+        pull_controller.handle_pull_error(error)
+
+      {:ok, []} ->
+        prefixed_log.("Received no messages")
+
+      {:ok, messages} ->
+        prefixed_log.("Received #{messages |> Enum.count()} messages")
+    end
   end
 
   @spec validate_pull_controller!(pull_controller()) :: pull_controller()
@@ -27,6 +40,7 @@ defmodule ExGcloudPubsubPuller do
           function_exported?(handler_module, :subscription_id, 0) and
             function_exported?(handler_module, :handle_stagnant, 0) and
             function_exported?(handler_module, :handle_pull_error, 1) and
+            function_exported?(handler_module, :handle_ack_error, 1) and
               function_exported?(handler_module, :handle_message, 1) ->
             handler_module
 

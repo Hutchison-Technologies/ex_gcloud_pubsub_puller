@@ -43,6 +43,11 @@ defmodule ExGcloudPubsubPuller.PullController do
           def handle_pull_error(%Tesla.Env{status: 404}), do: IO.inspect("subscription doesn't exist!")
           def handle_pull_error(%Tesla.Env{status: 403}), do: IO.inspect("I am not authorized!")
           def handle_pull_error(%Tesla.Env{} = error), do: IO.inspect("Something went wrong: \#{inspect(error)}")
+
+          @impl true
+          def handle_ack_error(%Tesla.Env{status: 404}), do: IO.inspect("message doesn't exist!")
+          def handle_ack_error(%Tesla.Env{status: 403}), do: IO.inspect("I am not authorized!")
+          def handle_ack_error(%Tesla.Env{} = error), do: IO.inspect("Something went wrong: \#{inspect(error)}")
         end
 
       # lib/my_app/usage_pull_controller.ex:
@@ -68,6 +73,11 @@ defmodule ExGcloudPubsubPuller.PullController do
           def handle_pull_error(%Tesla.Env{status: 404}), do: IO.inspect("subscription doesn't exist!")
           def handle_pull_error(%Tesla.Env{status: 403}), do: IO.inspect("I am not authorized!")
           def handle_pull_error(%Tesla.Env{} = error), do: IO.inspect("Something went wrong: \#{inspect(error)}")
+
+          @impl true
+          def handle_ack_error(%Tesla.Env{status: 404}), do: IO.inspect("message doesn't exist!")
+          def handle_ack_error(%Tesla.Env{status: 403}), do: IO.inspect("I am not authorized!")
+          def handle_ack_error(%Tesla.Env{} = error), do: IO.inspect("Something went wrong: \#{inspect(error)}")
         end
 
   """
@@ -130,4 +140,17 @@ defmodule ExGcloudPubsubPuller.PullController do
 
   """
   @callback handle_pull_error(Tesla.Env.t()) :: any()
+
+  @doc """
+  Gets called if acknowledging a message to Google PubSub yields an error.
+
+  ## Examples
+
+      @impl true
+      def handle_ack_error(%Tesla.Env{status: 404}), do: IO.inspect("message doesn't exist!")
+      def handle_ack_error(%Tesla.Env{status: 403}), do: IO.inspect("I am not authorized!")
+      def handle_ack_error(%Tesla.Env{} = error), do: IO.inspect("Something went wrong: \#{inspect(error)}")
+
+  """
+  @callback handle_ack_error(Tesla.Env.t()) :: any()
 end
