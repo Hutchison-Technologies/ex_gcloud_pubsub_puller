@@ -8,3 +8,5 @@ config :junit_formatter,
 
 config :goth,
   disabled: true
+
+config :logger, level: :warn

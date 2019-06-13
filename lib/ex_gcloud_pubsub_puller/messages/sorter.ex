@@ -10,6 +10,7 @@ defmodule ExGcloudPubsubPuller.Messages.Sorter do
           GoogleApi.PubSub.V1.Model.ReceivedMessage.t()
         ]
   def by_date(messages) do
-    messages |> Enum.sort_by(fn %{message: %{publishTime: datetime}} -> datetime end)
+    messages
+    |> Enum.sort_by(fn %{message: %{publishTime: datetime}} -> datetime |> Timex.to_unix() end)
   end
 end

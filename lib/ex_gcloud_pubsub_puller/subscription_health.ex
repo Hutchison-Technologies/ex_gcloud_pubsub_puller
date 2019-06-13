@@ -17,4 +17,12 @@ defmodule ExGcloudPubsubPuller.SubscriptionHealth do
         false
     end
   end
+
+  @doc """
+  Uses the MemoryStore to save a subscription's `last_message_at` to now.
+  """
+  @spec touch(String.t()) :: any()
+  def touch(subscription_id) do
+    MemoryStore.save(subscription_id, %{last_message_at: Timex.now()})
+  end
 end

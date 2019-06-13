@@ -49,7 +49,7 @@ defmodule ExGcloudPubsubPuller.Gcloud.Pubsub do
   @doc """
   Sends an acknowledge request to Google Cloud for the given message on the given subscription.
   """
-  @spec acknowledge(String.t(), String.t()) :: :ok | {:error, String.t()}
+  @spec acknowledge(String.t(), String.t()) :: :ok | {:error, Tesla.Env.t()}
   def acknowledge(subscription_id, message_ack_id) do
     conn = Gcloud.connection()
 
@@ -73,10 +73,8 @@ defmodule ExGcloudPubsubPuller.Gcloud.Pubsub do
   @spec handle_ack_response(
           {:error, Tesla.Env.t()}
           | {:ok, Model.Empty.t()}
-        ) :: :ok | {:error, String.t()}
-  defp handle_ack_response({:error, %Tesla.Env{url: url, body: body, status: status}}) do
-    {:error, "Error #{status} acknowledging a message to Google PubSub at #{url}, got: #{body}"}
-  end
+        ) :: :ok | {:error, Tesla.Env.t()}
+  defp handle_ack_response({:error, %Tesla.Env{}} = error), do: error
 
   defp handle_ack_response({:ok, %Model.Empty{}}), do: :ok
 end

@@ -1,6 +1,8 @@
 defmodule ExGcloudPubsubPuller do
   require Logger
   alias ExGcloudPubsubPuller.SubscriptionHealth
+  alias ExGcloudPubsubPuller.Messages.Sorter
+  alias ExGcloudPubsubPuller.Gcloud.Pubsub
 
   @typedoc """
   A Module that implements the `ExGcloudPubsubPuller.PullController` behaviour.
@@ -20,11 +22,7 @@ defmodule ExGcloudPubsubPuller do
     prefixed_log = fn msg -> log(log_prefix, msg) end
     prefixed_log.("Starting pull job")
 
-    case ExGcloudPubsubPuller.Gcloud.Pubsub.pull(subscription_id) do
-      {:error, error} ->
-        prefixed_log.("Received error from pull")
-        pull_controller.handle_pull_error(error)
-
+    case Pubsub.pull(subscription_id) do
       {:ok, []} ->
         prefixed_log.("Received no messages")
 
@@ -34,7 +32,36 @@ defmodule ExGcloudPubsubPuller do
         end
 
       {:ok, messages} ->
-        prefixed_log.("Received #{messages |> Enum.count()} messages")
+        prefixed_log.("Received #{messages |> length()} messages")
+        SubscriptionHealth.touch(subscription_id)
+
+        messages
+        |> Sorter.by_date()
+        |> Enum.each(fn %{ackId: ack_id, message: message} ->
+          case pull_controller.handle_message(message) do
+            :ok ->
+              case Pubsub.acknowledge(subscription_id, ack_id) do
+                :ok ->
+                  nil
+
+                {:error, error} ->
+                  prefixed_log.("Received error from acknowledge: #{error |> inspect()}")
+
+                  pull_controller.handle_ack_error(error)
+              end
+
+            :error ->
+              prefixed_log.(
+                "Pull controller #{pull_controller |> inspect()}.handle_message returned :error whilst handling message: #{
+                  message |> inspect()
+                }"
+              )
+          end
+        end)
+
+      {:error, error} ->
+        prefixed_log.("Received error from pull: #{error |> inspect()}")
+        pull_controller.handle_pull_error(error)
     end
   end
 
