@@ -180,7 +180,7 @@ defmodule ExGcloudPubsubPullerTest do
         @behaviour ExGcloudPubsubPuller.PullController
 
         @impl true
-        def subscription_id(), do: "subScri0ption"
+        def subscription_id(), do: "subScri0pt.ion"
 
         @impl true
         def handle_message(_), do: :ok
