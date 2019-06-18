@@ -38,7 +38,10 @@ defmodule ExGcloudPubsubPuller do
         messages
         |> Sorter.by_date()
         |> Enum.each(fn %{ackId: ack_id, message: message} ->
-          case pull_controller.handle_message(message) do
+          case pull_controller.handle_message(%{
+                 message
+                 | data: message.data |> Base.decode64!() |> Poison.decode!()
+               }) do
             :ok ->
               case Pubsub.acknowledge(subscription_id, ack_id) do
                 :ok ->
