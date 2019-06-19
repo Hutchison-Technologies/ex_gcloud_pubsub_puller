@@ -29,6 +29,24 @@ defmodule ExGcloudPubsubPuller.SubscriptionHealthTest do
       MemoryStore.save(sub_id, %{last_message_at: Timex.now() |> Timex.shift(seconds: -60)})
       assert SubscriptionHealth.is_stagnant?(sub_id)
     end
+
+    test "returns true when that entry is still stagnant 30 seconds later" do
+      sub_id = "poop2_sub"
+      sixty_seconds_ago = Timex.now() |> Timex.shift(seconds: -60)
+
+      MemoryStore.save(sub_id, %{
+        last_message_at: sixty_seconds_ago,
+        last_stagnant_at: sixty_seconds_ago
+      })
+
+      assert SubscriptionHealth.is_stagnant?(sub_id)
+
+      MemoryStore.save(sub_id, %{
+        last_stagnant_at: sixty_seconds_ago
+      })
+
+      assert SubscriptionHealth.is_stagnant?(sub_id)
+    end
   end
 
   describe "touch/1 given subscription_id that has no entry in the memory store" do

@@ -13,7 +13,11 @@ defmodule ExGcloudPubsubPuller.SubscriptionHealth do
         cond do
           Timex.before?(last_message_at, thirty_seconds_ago) and
               Timex.before?(last_stagnant_at, thirty_seconds_ago) ->
-            MemoryStore.save(subscription_id, %{last_stagnant_at: Timex.now()})
+            MemoryStore.save(subscription_id, %{
+              last_message_at: last_message_at,
+              last_stagnant_at: Timex.now()
+            })
+
             true
 
           true ->
@@ -23,7 +27,24 @@ defmodule ExGcloudPubsubPuller.SubscriptionHealth do
       %{last_message_at: last_message_at} ->
         cond do
           Timex.before?(last_message_at, thirty_seconds_ago) ->
-            MemoryStore.save(subscription_id, %{last_stagnant_at: Timex.now()})
+            MemoryStore.save(subscription_id, %{
+              last_message_at: last_message_at,
+              last_stagnant_at: Timex.now()
+            })
+
+            true
+
+          true ->
+            false
+        end
+
+      %{last_stagnant_at: last_stagnant_at} ->
+        cond do
+          Timex.before?(last_stagnant_at, thirty_seconds_ago) ->
+            MemoryStore.save(subscription_id, %{
+              last_stagnant_at: Timex.now()
+            })
+
             true
 
           true ->
