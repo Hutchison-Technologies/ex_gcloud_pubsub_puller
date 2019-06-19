@@ -14,6 +14,14 @@ defmodule ExGcloudPubsubPuller.SubscriptionHealthTest do
       sub_id = "great_sub"
       SubscriptionHealth.touch(sub_id)
       refute SubscriptionHealth.is_stagnant?(sub_id)
+      refute SubscriptionHealth.is_stagnant?(sub_id)
+    end
+
+    test "returns false when that entry contains last_stagnant_at < 30 seconds ago" do
+      sub_id = "poop_sub"
+      MemoryStore.save(sub_id, %{last_message_at: Timex.now() |> Timex.shift(seconds: -60)})
+      assert SubscriptionHealth.is_stagnant?(sub_id)
+      refute SubscriptionHealth.is_stagnant?(sub_id)
     end
 
     test "returns true when that entry contains last_message_at >= 30 seconds ago" do

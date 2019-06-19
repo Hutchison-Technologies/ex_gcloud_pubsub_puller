@@ -6,14 +6,31 @@ defmodule ExGcloudPubsubPuller.SubscriptionHealth do
   """
   @spec is_stagnant?(String.t()) :: boolean()
   def is_stagnant?(subscription_id) do
+    thirty_seconds_ago = Timex.now() |> Timex.shift(seconds: -30)
+
     case MemoryStore.load(subscription_id) do
-      nil ->
-        false
+      %{last_message_at: last_message_at, last_stagnant_at: last_stagnant_at} ->
+        cond do
+          Timex.before?(last_message_at, thirty_seconds_ago) and
+              Timex.before?(last_stagnant_at, thirty_seconds_ago) ->
+            MemoryStore.save(subscription_id, %{last_stagnant_at: Timex.now()})
+            true
+
+          true ->
+            false
+        end
 
       %{last_message_at: last_message_at} ->
-        Timex.before?(last_message_at, Timex.now() |> Timex.shift(seconds: -30))
+        cond do
+          Timex.before?(last_message_at, thirty_seconds_ago) ->
+            MemoryStore.save(subscription_id, %{last_stagnant_at: Timex.now()})
+            true
 
-      %{} ->
+          true ->
+            false
+        end
+
+      _ ->
         false
     end
   end
