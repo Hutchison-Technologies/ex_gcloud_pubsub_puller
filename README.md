@@ -20,7 +20,7 @@ and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/ex_gcloud_pubsub_puller](https://hexdocs.pm/ex_gcloud_pubsub_puller).
 
 ## Configuring Pull Controllers
-
+This is using the Quantum library for handling the scheduling : https://hexdocs.pm/quantum/readme.html
 Add config to your `config/config.exs` to configure pull controllers, like so:
 
 ```
